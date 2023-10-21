@@ -1,0 +1,38 @@
+[
+     {
+          "title": "Remeron",
+          "description": "Tela de algodon",
+          "price": 2000,
+          "thumbnail": "Ruta de la imagen",
+          "code": 123,
+          "stock": 10,
+          "id": 1
+     },
+     {
+          "title": "Pantalon",
+          "description": "Tela de nylon",
+          "price": 1000,
+          "thumbnail": "Ruta",
+          "code": 124,
+          "stock": 20,
+          "id": 2
+     },
+     {
+          "title": "Medias",
+          "description": "Tela de algodon",
+          "price": 1000,
+          "thumbnail": "Ruta",
+          "code": 126,
+          "stock": 20,
+          "id": 4
+     },
+     {
+          "title": "Short",
+          "description": "Tela de nylon",
+          "price": 1000,
+          "thumbnail": "Ruta",
+          "code": 125,
+          "stock": 20,
+          "id": 5
+     }
+]
