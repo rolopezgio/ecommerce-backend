@@ -1,24 +1,23 @@
 const express = require('express')
-const ProductManager = require('./ProductManager')
+const productsRouter = require('./routes/products.router')
+const cartsRouter = require('./routes/carts.router')
 
-const productManager = new ProductManager('./src/archivos/productos.json')
-const PORTO = 3000
+const PORTO = 8080
 const app = express()
 
-app.get('/products', (req, res) => {
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
-    let limit = req.query.limit
+app.use('/api/products', productsRouter)
+app.use('/api/carts', cartsRouter)
 
-    let productos = productManager.getProducts()
-
-    if (limit) {
-
-        productos=productos.slice(0, limit)
-
-    }
-    res.json(productos)
-})
+app.get('/', (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(200).send('Bienvenidos a la página de inicio');
+  });
 
 const server = app.listen(PORTO, () => {
     console.log(`Server online ${PORTO}`)
 })
+
+module.exports = router;
