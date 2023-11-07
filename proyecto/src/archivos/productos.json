@@ -16,23 +16,5 @@
           "code": 124,
           "stock": 20,
           "id": 2
-     },
-     {
-          "title": "Medias",
-          "description": "Tela de algodon",
-          "price": 1000,
-          "thumbnail": "Ruta",
-          "code": 126,
-          "stock": 20,
-          "id": 4
-     },
-     {
-          "title": "Short",
-          "description": "Tela de nylon",
-          "price": 1000,
-          "thumbnail": "Ruta",
-          "code": 125,
-          "stock": 20,
-          "id": 5
      }
 ]

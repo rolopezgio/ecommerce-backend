@@ -54,7 +54,7 @@ router.post('/', (req, res) => {
         id
     }
     productos.push(nuevoProducto)
-
+    fs.writeFileSync(productManager.getPath(), JSON.stringify(productManager.getProducts()));
     res.send(nuevoProducto)
 
 });
@@ -90,7 +90,7 @@ router.put('/:id', (req, res) => {
         id
     }
     productos[indiceProducto] = productoModificado
-
+    fs.writeFileSync(productManager.getPath(), JSON.stringify(productManager.getProducts()));
     res.send(productos)
 
     res.setHeader('Content-Type', 'application/json');
@@ -107,21 +107,16 @@ router.delete('/:id', (req, res) => {
         return res.status(400).json({ error: `Indique un id numérico` })
     }
 
-    // NO FUNCIONA
-//     let productos = productManager.getUsuarios()
-//     let indiceProducto = productos.findIndex(producto => producto.id === id)
-//     if (indiceProducto ===-1) {
-//         res.setHeader('Content-Type', 'application/json');
-//         return res.status(400).json({ error: `No existen productos con id ${id}` })
-//     }   
-    
-    // NO FUNCIONA
-//     let productoEliminado = productos.splice(indiceProducto, 1)
-//     res.send(productos)
-//     res.setHeader('Content-Type', 'application/json');
-//     res.status(200).json({
-//         productoEliminado
-//     });
+    let productoEliminado=productManager.deleteProduct(id)
+    fs.writeFileSync(productManager.getPath(), JSON.stringify(productManager.getProducts()));
+
+    if(!productoEliminado){
+        res.setHeader('Content-Type','application/json');
+        return res.status(400).json({error:`El id de producto ${id} no existe`})
+    }else{
+        res.setHeader('Content-Type','application/json');
+        return res.status(200).json({payload:productoEliminado});
+    }
 });
 
 
