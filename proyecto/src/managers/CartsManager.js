@@ -19,20 +19,26 @@ class CartsManager {
     fs.writeFileSync(this.path, JSON.stringify(carts, null, 2));
   }
 
-  addProductToCart(cartId, productId, quantity) {
+  addProductToCart(cartId, productId) {
     const carts = this.getCarts();
     const cart = carts.find((cart) => cart.id === cartId);
-
+  
     if (!cart) {
-      return false; // Carrito no encontrado
+      return false;
     }
-
-    const product = { id: productId, quantity };
-    cart.products.push(product);
+  
+    const existingProduct = cart.products.find((product) => product.id === productId);  
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.products.push({ id: productId, quantity: 1 });
+    }
+  
     fs.writeFileSync(this.path, JSON.stringify(carts, null, 2));
-
+  
     return true;
   }
+  
 }
 
 module.exports = CartsManager;
