@@ -1,20 +1,38 @@
 [
-     {
-          "title": "Remera",
-          "description": "Tela de algodon",
-          "price": 2000,
-          "thumbnail": "Ruta de la imagen",
-          "code": 123,
-          "stock": 10,
-          "id": 1
-     },
-     {
-          "title": "Pantalon",
-          "description": "Tela de nylon",
-          "price": 1000,
-          "thumbnail": "Ruta",
-          "code": 124,
-          "stock": 20,
-          "id": 2
-     }
+  {
+    "title": "Short",
+    "description": "Tela de lino",
+    "price": 999.99,
+    "code": 123,
+    "stock": 10,
+    "category": "Mujer",
+    "id": 1
+  },
+  {
+    "title": "Remera",
+    "description": "Tela de lino",
+    "price": 999.99,
+    "code": 124,
+    "stock": 20,
+    "category": "Mujer",
+    "id": 2
+  },
+  {
+    "title": "Pantalon",
+    "description": "Tela de algodon",
+    "price": 999.99,
+    "code": 125,
+    "stock": 20,
+    "category": "Hombre",
+    "id": 3
+  },
+  {
+    "title": "Medias",
+    "description": "Tela de algodon",
+    "price": 999.99,
+    "code": 126,
+    "stock": 30,
+    "category": "Hombre",
+    "id": 4
+  }
 ]

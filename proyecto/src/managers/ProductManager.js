@@ -8,6 +8,10 @@ class ProductManager {
         this.products = []
     }
 
+    getPath() {
+        return this.path;
+    }
+
     addProducts(title, description, price, thumbnail, code, stock) {
 
         let productos = this.getProducts()
@@ -93,16 +97,18 @@ class ProductManager {
 
          let indice= productos.findIndex(product=>product.id===id)
 
-         if(!indice === -1){ 
+         if(indice === -1){ 
             console.log(`El producto con id ${id} no existe`)           
-            return
+            return null; 
 
          }
+         let productoEliminado = { ...productos[indice] };
+         productos.splice(indice, 1);
 
-         productos.splice(indice, 1)
+         fs.writeFileSync(this.path, JSON.stringify(productos, null, 5));
 
-         fs.writeFileSync(this.path, JSON.stringify(productos, null, 5))
-    }
+         return productoEliminado;
+        }
 }
 
 module.exports=ProductManager

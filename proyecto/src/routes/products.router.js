@@ -1,8 +1,10 @@
+const fs = require('fs');
 const ProductManager = require('../managers/ProductManager');
 const path = require('path');
 
 const Router = require('express').Router;
 const router = Router()
+
 
 const productManager = new ProductManager(path.join(__dirname, "..", "archivos", "productos.json"))
 
@@ -54,7 +56,7 @@ router.post('/', (req, res) => {
         id
     }
     productos.push(nuevoProducto)
-    fs.writeFileSync(productManager.getPath(), JSON.stringify(productManager.getProducts()));
+    fs.writeFileSync(productManager.getPath(), JSON.stringify(productos, null, 2));
     res.send(nuevoProducto)
 
 });
@@ -115,7 +117,7 @@ router.delete('/:id', (req, res) => {
         return res.status(400).json({error:`El id de producto ${id} no existe`})
     }else{
         res.setHeader('Content-Type','application/json');
-        return res.status(200).json({payload:productoEliminado});
+        return res.status(200).json({"Producto Eliminado:":productoEliminado});
     }
 });
 
