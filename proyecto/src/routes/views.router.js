@@ -15,4 +15,9 @@ router.get('/realtimeproducts', (req, res) => {
     res.render('realTimeProducts', { productos });
 });
 
+router.get('/chat', (req, res) => {
+
+    res.status(200).render('chat');
+});
+
 module.exports = router;
