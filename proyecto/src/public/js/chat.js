@@ -45,7 +45,20 @@ Swal.fire({
         let br=document.createElement('br')
         divMensajes.append(parrafo, br)
         divMensajes.scrollTop=divMensajes.scrollHeight
-    })
+        fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: datos.user,
+                message: datos.message
+            })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+    });
 
     inputMensaje.addEventListener("keyup",(e)=>{
         console.log(e, e.target.value)

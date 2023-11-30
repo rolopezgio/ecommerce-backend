@@ -1,4 +1,6 @@
 const express = require('express')
+const mongoose = require('mongoose');
+// const messagesModelo = require('./dao/models/messages.model');
 const productsRouter = require('./routes/products.router')
 const cartsRouter = require('./routes/carts.router')
 const viewsRouter = require('./routes/views.router')
@@ -69,6 +71,7 @@ io.on("connection", socket => {
     mensajes.push(datos)
     io.emit('nuevoMensaje', datos)
   })
+  
 
   socket.on("disconnect",()=>{
     let usuario=usuarios.find(u=>u.id===socket.id)
@@ -78,3 +81,16 @@ io.on("connection", socket => {
 })
 
 })
+
+
+const connectToDB = async () => {
+  try {
+    await mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority', { dbName: 'ecommerce' })
+    console.log('Base de datos online')
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+connectToDB();
+
