@@ -5,8 +5,9 @@ const messagesEsquema = new mongoose.Schema(
     {
         user: String,
         message: String,
-    }
-)
+    },
+    { timestamps: true }
+);
 
 const messagesModelo = mongoose.model(messagesColeccion, messagesEsquema);
 

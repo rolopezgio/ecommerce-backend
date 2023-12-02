@@ -63,7 +63,7 @@ Swal.fire({
     inputMensaje.addEventListener("keyup",(e)=>{
         console.log(e, e.target.value)
         if(e.code==="Enter" && e.target.value.trim().length>0){
-            socket.emit('mensaje',{emisor:resultado.value, mensaje:e.target.value.trim()})
+            socket.emit('mensaje', { emisor: resultado.value, mensaje: e.target.value.trim() });
             e.target.value=''
         }
     })

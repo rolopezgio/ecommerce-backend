@@ -1,6 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose');
-// const messagesModelo = require('./dao/models/messages.model');
+const messagesRouter = require('./routes/messages.router');
 const productsRouter = require('./routes/products.router')
 const cartsRouter = require('./routes/carts.router')
 const viewsRouter = require('./routes/views.router')
@@ -18,8 +18,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/api/messages', messagesRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+
 
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
@@ -35,7 +37,6 @@ app.get('/', (req, res) => {
 const server = app.listen(PORTO, () => {
   console.log(`Server online ${PORTO}`)
 })
-
 
 const io = new Server(server)
 // io.on("connection",socket=>{
@@ -85,12 +86,14 @@ io.on("connection", socket => {
 
 const connectToDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority', { dbName: 'ecommerce' })
-    console.log('Base de datos online')
+    await mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority')
+    console.log('Base de datos online');
   } catch (error) {
-    console.log(error.message)
+    console.error('Error en la conexión a la base de datos:', error.message);
   }
 }
+
+
 
 connectToDB();
 
