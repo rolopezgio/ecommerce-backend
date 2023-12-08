@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Productos</title>
+</head>
+<body>
+  <h1>Lista de Productos</h1>
+  {{#each productos}}
+    <div>
+      <h2>{{title}}</h2>
+      <p>{{description}}</p>
+      <p>Precio: {{price}}</p>
+      <p>Categoría: {{category}}</p>
+      <button onclick="addToCart('{{_id}}')">Agregar al Carrito</button>
+    </div>
+  {{/each}}
+
+  <script>
+    function addToCart(productId) {
+      console.log('Producto agregado al carrito:', productId);
+    }
+  </script>
+
+  <a href="/">Home Page</a>
+
+</body>
+</html>

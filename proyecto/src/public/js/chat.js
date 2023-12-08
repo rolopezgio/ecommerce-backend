@@ -3,7 +3,6 @@ const socket=io()
 let inputMensaje=document.getElementById('mensaje')
 let divMensajes=document.getElementById('mensajes')
 
-
 Swal.fire({
     title:"Registrese",
     input:"text",
@@ -17,7 +16,6 @@ Swal.fire({
     socket.emit('id', resultado.value)
     inputMensaje.focus()
     document.title=resultado.value
-
 
     socket.on('nuevoUsuario', nombre=>{
         Swal.fire({
@@ -75,5 +73,4 @@ Swal.fire({
             position:"top-right"
         })
     })
-
 })

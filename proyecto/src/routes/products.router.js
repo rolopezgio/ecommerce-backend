@@ -11,15 +11,69 @@ const router = Router()
 const productManager = new ProductManager(path.join(__dirname, "..", "archivos", "productos.json"))
 
 router.get('/', async (req, res) => {
-  let productos=[]
     try {
-      productos = await productsModelo.find();
+      let { limit = 10, page = 1, query = '', sort, category, availability } = req.query;
+      limit = parseInt(limit);
+      page = parseInt(page);
+  
+      const skip = (page - 1) * limit;
+  
+      let productos = [];
+  
+      const sortOptions = {};
+      if (sort) {
+        const order = sort.startsWith('-') ? -1 : 1;
+        const field = sort.replace(/^-/, '');
+        sortOptions[field] = order;
+      }
+  
+      const searchOptions = {};
+      if (query) {
+        searchOptions.$or = [
+          { title: { $regex: query, $options: 'i' } },
+          { description: { $regex: query, $options: 'i' } },
+          { price: { $regex: query, $options: 'i' } },
+          { category: { $regex: query, $options: 'i' } },
+        ];
+      }
+  
+      if (category) {
+        searchOptions.category = category;
+      }
+  
+      if (availability !== undefined) {
+        searchOptions.stock = availability === 'true' ? { $gt: 0 } : 0;
+      }
+  
+      productos = await productsModelo
+        .find(searchOptions)
+        .limit(limit)
+        .skip(skip)
+        .sort(sortOptions);
+  
+      const totalProductos = await productsModelo.countDocuments(searchOptions);
+      const totalPages = Math.ceil(totalProductos / limit);
+      const hasPrevPage = page > 1;
+      const hasNextPage = page < totalPages;
+      const prevLink = hasPrevPage ? `/api/products?page=${page - 1}&limit=${limit}` : null;
+      const nextLink = hasNextPage ? `/api/products?page=${page + 1}&limit=${limit}` : null;
+  
+      res.status(200).json({
+        status: 'success',
+        payload: productos,
+        totalPages,
+        prevPage: hasPrevPage ? page - 1 : null,
+        nextPage: hasNextPage ? page + 1 : null,
+        page,
+        hasPrevPage,
+        hasNextPage,
+        prevLink,
+        nextLink,
+      });
     } catch (error) {
-      console.log(error.message)        
+      console.error('Error al obtener productos:', error);
+      res.status(500).json({ status: 'error', error: 'Error al obtener productos.' });
     }
-    res.status(200).json({
-      productos
-  })
   });
 
   router.get('/:id',async(req,res)=>{

@@ -9,7 +9,6 @@ const engine = exphbs.engine;
 const Server = require("socket.io").Server;
 const path = require('path');
 
-
 const PORTO = 8080
 const app = express()
 
@@ -21,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/messages', messagesRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
+app.use('/cart', viewsRouter);
 
 
 app.engine('handlebars', engine())
@@ -62,7 +62,6 @@ io.on("connection", socket => {
   console.log(`Se ha conectado un cliente id ${socket.id}`)
 
   socket.on('id', nombre => {
-
     usuarios.push({nombre, id:socket.id})
     socket.broadcast.emit('nuevoUsuario', nombre)
     socket.emit("Bienvenido",mensajes)
@@ -72,7 +71,6 @@ io.on("connection", socket => {
     mensajes.push(datos)
     io.emit('nuevoMensaje', datos)
   })
-  
 
   socket.on("disconnect",()=>{
     let usuario=usuarios.find(u=>u.id===socket.id)
@@ -80,9 +78,7 @@ io.on("connection", socket => {
         io.emit("usuarioDesconectado", usuario.nombre)
     }
 })
-
 })
-
 
 const connectToDB = async () => {
   try {
@@ -92,8 +88,4 @@ const connectToDB = async () => {
     console.error('Error en la conexión a la base de datos:', error.message);
   }
 }
-
-
-
 connectToDB();
-
