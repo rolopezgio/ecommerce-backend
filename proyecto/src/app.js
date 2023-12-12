@@ -20,12 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/messages', messagesRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
-app.use('/cart', viewsRouter);
+app.use('/views', viewsRouter); 
 
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
 
-app.engine('handlebars', engine())
-app.set('view engine', 'handlebars')
-app.set('views', './src/views')
 
 app.use('/', viewsRouter);
 

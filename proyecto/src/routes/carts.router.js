@@ -1,20 +1,17 @@
-const CartsManager = require('../dao/managers/CartsManager');
-const path = require('path');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 const express = require('express');
 const router = express.Router();
 const { cartsModelo } = require('../dao/models/carts.model');
 
-
-const cartsManager = new CartsManager(path.join(__dirname, '..', 'archivos', 'carts.json'));
-
-router.post('/', (req, res) => {
-  const newCart = {
-    id: Math.floor(Math.random() * 1000),
-    products: [],
-  };
-
-  cartsManager.addCart(newCart);
-  res.status(201).json(newCart);
+router.post('/', async (req, res) => {
+  try {
+    const newCart = await cartsModelo.create({ products: [] });
+    res.status(201).json(newCart);
+  } catch (error) {
+    console.error('Error al crear un nuevo carrito:', error);
+    res.status(500).json({ error: 'Error al crear un nuevo carrito.' });
+  }
 });
 
 router.get('/:cid', async (req, res) => {

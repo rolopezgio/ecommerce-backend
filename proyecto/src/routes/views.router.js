@@ -30,7 +30,7 @@ router.get('/products', (req, res) => {
     }
   });
 
-  router.get('/:cid', async (req, res) => {
+  router.get('/carts/:cid', async (req, res) => {
     const cartId = req.params.cid;
   
     try {
@@ -45,5 +45,6 @@ router.get('/products', (req, res) => {
       res.status(500).json({ error: 'Error al obtener el carrito.' });
     }
   });
+  
 
 module.exports = router;
