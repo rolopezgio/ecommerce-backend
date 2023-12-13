@@ -82,7 +82,7 @@ io.on("connection", socket => {
 
 const connectToDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority')
+    await mongoose.connect('mongodb+srv://rolopezgio:coder.coder@cluster0.s4105lc.mongodb.net/?retryWrites=true&w=majority&dbName=ecommerce')
     console.log('Base de datos online');
   } catch (error) {
     console.error('Error en la conexión a la base de datos:', error.message);

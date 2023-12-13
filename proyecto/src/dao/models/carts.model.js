@@ -9,7 +9,12 @@ const cartsEsquema = new mongoose.Schema(
     code: Number,
     stock: Number,
     category: String,
-    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    products: [
+      { 
+        product: {type: mongoose.Schema.Types.ObjectId, ref: 'products'}, 
+        quantity: Number
+      }
+    ],
   },
   { collection: cartsColeccion }
 

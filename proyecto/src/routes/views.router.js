@@ -34,12 +34,12 @@ router.get('/products', (req, res) => {
     const cartId = req.params.cid;
   
     try {
-      const cart = await cartsModelo.findById(cartId).populate('products');
+      const cart = await cartsModelo.findById(cartId).populate('products').lean();
       if (!cart) {
         return res.status(404).json({ error: 'Carrito no encontrado' });
       }
   
-      res.render('cart', { cart });
+      res.render('carts', { cart });
     } catch (error) {
       console.error('Error al obtener el carrito:', error);
       res.status(500).json({ error: 'Error al obtener el carrito.' });
