@@ -4,6 +4,13 @@ const router = express.Router();
 
 const productManager = new ProductManager('./src/archivos/productos.json');
 
+const auth=(req,res,next)=>{
+  if(!req.session.usuario){
+    return res.redirect('/login')
+  }
+  next()
+}
+
 router.get('/', (req, res) => {
     const productos = productManager.getProducts();
     res.render('home', { productos });
@@ -45,6 +52,23 @@ router.get('/products', (req, res) => {
       res.status(500).json({ error: 'Error al obtener el carrito.' });
     }
   });
-  
+
+  router.get('/registro',(req,res)=>{
+    let {error}=req.query
+    res.setHeader('Content-Type','text/html')
+    res.status(200).render('registro', {error})
+})
+
+router.get('/login',(req,res)=>{
+    let {error, mensaje}=req.query
+    res.setHeader('Content-Type','text/html')
+    res.status(200).render('login', {error, mensaje})
+})
+
+router.get('/perfil', auth, (req,res)=>{
+    let usuario=req.session.usuario
+    res.setHeader('Content-Type','text/html')
+    res.status(200).render('perfil', {usuario})
+})  
 
 module.exports = router;

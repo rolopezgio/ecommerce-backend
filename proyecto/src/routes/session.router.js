@@ -1,10 +1,8 @@
 const { Router } = require('express');
-const { usuariosModelo } = require('../../dao/models/login/usuarios.modelo.js');
+const { usuariosModelo } = require('../dao/models/login/usuarios.modelo.js');
 const crypto = require('crypto');
+
 const router = Router();
-
-
-const sessionRouter = Router();
 
 router.post('/login', async(req, res)=>{
 
@@ -70,4 +68,4 @@ router.get('/logout',(req,res)=>{
 
 });
 
-module.exports = { router: sessionRouter };
+module.exports = router;
