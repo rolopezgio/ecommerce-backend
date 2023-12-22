@@ -1,3 +1,6 @@
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const mongoose = require('mongoose');
 const messagesRouter = require('./routes/messages.router');
@@ -11,6 +14,8 @@ const Server = require('socket.io').Server;
 const path = require('path');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const { usuariosModelo } = require('./dao/models/usuarios.modelo.js');
+
 
 const PORTO = 8080;
 const app = express();
@@ -32,15 +37,57 @@ app.use(session(
       
   }
 ))
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
+
 
 app.use('/api/carts', cartsRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/session', sessionRouter)
+app.use('/logout', sessionRouter)
 app.use('/', viewsRouter);
+
+passport.use(new LocalStrategy(
+  { usernameField: 'email' },
+  async (email, password, done) => {
+    try {
+      const user = await usuariosModelo.findOne({ email });
+
+      if (!user) {
+        return done(null, false, { message: 'Usuario no encontrado' });
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password);
+
+      if (!isValidPassword) {
+        return done(null, false, { message: 'Contraseña incorrecta' });
+      }
+
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await usuariosModelo.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
+
 
 const server = app.listen(PORTO, () => {
   console.log(`Server online ${PORTO}`);
