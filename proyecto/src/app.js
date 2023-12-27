@@ -15,6 +15,8 @@ const path = require('path');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const { usuariosModelo } = require('./dao/models/usuarios.modelo.js');
+const { initPassport } = require('./config/config.passport.js');
+
 
 
 const PORTO = 8080;
@@ -37,6 +39,7 @@ app.use(session(
       
   }
 ))
+initPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 

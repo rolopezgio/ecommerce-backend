@@ -78,15 +78,21 @@ router.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-router.get('/auth/github',
-  passport.authenticate('github', { scope: ['user:email'] })
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] })
 );
 
-router.get('/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
+router.get('/callbackGithub', passport.authenticate('github', { failureRedirect: '/errorGithub' }),
   (req, res) => {
     res.redirect('/perfil');
   }
 );
+
+router.get('/errorGithub',(req,res)=>{
+    
+  res.setHeader('Content-Type','application/json');
+  res.status(200).json({
+      error: "Error al autenticar con Github"
+  }); 
+})
 
 module.exports = router;

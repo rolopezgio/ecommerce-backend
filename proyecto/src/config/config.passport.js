@@ -66,13 +66,14 @@ passport.use('login', new LocalStrategy(
       return done(error, false);
     }
   }
-));
+))
 
+const initPassport=()=>{
 passport.use('github', new GitHubStrategy(
     {
-        clientID: "0a7dc3a5256dd26edb03", 
-        clientSecret: "e13ecea77180fb813d95ddaf635ee350c346ffbe", 
-        callbackURL: "https://github.com/rolopezgio/ecommerce-backend", 
+        clientID: "Iv1.2c52be52ca5f6d2a", 
+        clientSecret: "8f19f3783ebc4172bfa5e7bf0093892af49e8f15", 
+        callbackURL: "http://localhost:8080/api/session/callbackGithub", 
     },
     async(accessToken, refreshToken, profile, done)=>{
         try {
@@ -94,6 +95,7 @@ passport.use('github', new GitHubStrategy(
         }
     }
 ))
+}
 
 passport.serializeUser((usuario, done) => {
   done(null, usuario._id);
@@ -104,4 +106,7 @@ passport.deserializeUser(async (id, done) => {
   done(null, usuario);
 });
 
-module.exports = passport;
+module.exports = {
+  passport,
+  initPassport,
+};
