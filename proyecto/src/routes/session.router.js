@@ -4,36 +4,10 @@ const passport = require('passport');
 const { usuariosModelo } = require('../dao/models/usuarios.modelo.js');
 const router = Router();
 
-router.post('/login', async (req, res) => {
-    let { email, password } = req.body;
-  
-    if (!email || !password) {
-      return res.redirect('/login?error=Complete todos los datos');
-    }
-  
-    try {
-      const user = await usuariosModelo.findOne({ email });
-  
-      if (!user) {
-        return res.redirect(`/login?error=credenciales incorrectas`);
-      }
-  
-      const isValidPassword = await bcrypt.compare(password, user.password);
-  
-      if (!isValidPassword) {
-        return res.redirect(`/login?error=credenciales incorrectas`);
-      }
-  
-      req.session.usuario = {
-        nombre: user.nombre,
-        email: user.email,
-      };
-  
-      res.redirect('/perfil');
-    } catch (error) {
-      res.redirect('/login?error=Error inesperado. Reintente en unos minutos');
-    }
-  });
+router.post('/login', passport.authenticate('local-login', {
+  successRedirect: '/perfil',
+  failureRedirect: '/login?error=credenciales incorrectas',
+}));
 
 router.post('/registro', async (req, res) => {
   let { nombre, email, password } = req.body;
@@ -43,9 +17,8 @@ router.post('/registro', async (req, res) => {
   }
 
   let regMail = /^(([^<>()\[\]\\.,;:\s@”]+(\.[^<>()\[\]\\.,;:\s@”]+)*)|(“.+”))@((\[[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}\.[0–9]{1,3}])|(([a-zA-Z\-0–9]+\.)+[a-zA-Z]{2,}))$/;
-  console.log(regMail.test(email));
   if (!regMail.test(email)) {
-    return res.redirect('/registro?error=Mail con formato incorrecto...!!!');
+    return res.redirect('/registro?error=Formato de mail incorrecto');
   }
 
   let existe = await usuariosModelo.findOne({ email });
@@ -69,30 +42,37 @@ router.post('/registro', async (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      res.redirect('/login?error=fallo en el logout');
-    }
-  });
-
+  req.logout();
   res.redirect('/login');
 });
 
-router.get('/github', passport.authenticate('github', { scope: ['user:email'] })
-);
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
-router.get('/callbackGithub', passport.authenticate('github', { failureRedirect: '/errorGithub' }),
-  (req, res) => {
-    res.redirect('/perfil');
-  }
-);
+router.get('/callbackGithub', passport.authenticate('github', {
+  successRedirect: '/perfil',
+  failureRedirect: '/errorGithub',
+}));
 
-router.get('/errorGithub',(req,res)=>{
-    
-  res.setHeader('Content-Type','application/json');
+router.get('/errorGithub', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.status(200).json({
-      error: "Error al autenticar con Github"
-  }); 
-})
+    error: 'Error al autenticar con Github',
+  });
+});
+
+const auth = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'No autenticado' });
+  }
+  next();
+};
+
+router.get('/current', auth, (req, res) => {
+  const { nombre, email } = req.user;
+  res.json({ nombre, email });
+});
+
+module.exports = router;
+
 
 module.exports = router;
