@@ -1,6 +1,6 @@
 const passport = require('passport');
-const { initPassport } = require('./config/config.passport.js');
 const mongoose = require('mongoose');
+const { initPassport } = require('./config/config.passport.js');
 const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
 const messagesRouter = require('./routes/messages.router');
