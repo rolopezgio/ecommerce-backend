@@ -2,6 +2,7 @@ const ProductManager = require('../dao/managers/ProductManager');
 const express = require('express');
 const router = express.Router();
 const { UserModel } = require('../dao/models/usuarios.modelo');
+const { cartsModelo } = require('../dao/models/carts.model');
 const bcrypt = require('bcrypt');
 
 
@@ -40,7 +41,7 @@ router.get('/products', (req, res) => {
     }
   });
 
-  router.get('/carts/:cid', async (req, res) => {
+  router.get('/carts', async (req, res) => {
     const cartId = req.params.cid;
   
     try {
@@ -55,6 +56,7 @@ router.get('/products', (req, res) => {
       res.status(500).json({ error: 'Error al obtener el carrito.' });
     }
   });
+  
 
   router.get('/registro', (req, res) => {
     let { error } = req.query;

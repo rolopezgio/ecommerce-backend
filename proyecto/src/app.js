@@ -1,11 +1,12 @@
+require('dotenv').config();
 const passport = require('passport');
 const mongoose = require('mongoose');
 const { initPassport } = require('./config/config.passport.js');
 const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
-const messagesRouter = require('./routes/messages.router');
-const productsRouter = require('./routes/products.router');
-const cartsRouter = require('./routes/carts.router');
+const messagesRouter = require('./routes/messages/messages.router.js');
+const cartsRouter = require('./routes/carts/carts.router.js');
+const productsRouter = require('./routes/products/products.router.js');
 const viewsRouter = require('./routes/views.router');
 const sessionRouter = require ('./routes/session.router')
 const exphbs = require('express-handlebars');
@@ -15,9 +16,12 @@ const path = require('path');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const { UserModel } = require('./dao/models/user.model');
+const config = require('./config/config.js');
 
 const PORTO = 8080;
 const app = express();
+
+app.set('port', config.port);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -115,8 +119,8 @@ passport.deserializeUser(async (id, done) => {
 });
 
 
-const server = app.listen(PORTO, () => {
-  console.log(`Server online ${PORTO}`);
+const server = app.listen(config.port, () => {
+  console.log(`Servidor corriendo en el puerto ${config.port}`);
 });
 
 const io = new Server(server);
