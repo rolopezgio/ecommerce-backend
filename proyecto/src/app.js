@@ -15,8 +15,10 @@ const Server = require('socket.io').Server;
 const path = require('path');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const { UserModel } = require('./dao/models/user.model');
+const { usuariosModelo } = require('./dao/models/usuarios.modelo.js');
 const config = require('./config/config.js');
+const bcrypt = require('bcrypt');
+
 
 const PORTO = 8080;
 const app = express();
@@ -91,7 +93,7 @@ passport.use('local-login', new LocalStrategy({
   usernameField: 'email',
 }, async (email, password, done) => {
   try {
-    const usuario = await UserModel.findOne({ email });
+    const usuario = await usuariosModelo.findOne({ email });
     if (!usuario) {
       return done(null, false, { message: 'Usuario no encontrado' });
     }
@@ -103,7 +105,8 @@ passport.use('local-login', new LocalStrategy({
   } catch (error) {
     return done(error);
   }
-}))
+}));
+
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

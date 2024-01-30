@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
-const { UserModel } = require('../dao/models/user.model.js');
+const { usuariosModelo } = require('../dao/models/usuarios.modelo.js');
 const bcrypt = require('bcrypt');
 
 passport.use('local-register', new LocalStrategy(
@@ -14,14 +14,14 @@ passport.use('local-register', new LocalStrategy(
       const { first_name, last_name, age } = req.body;
 
       // Verifica si el email ya está registrado
-      const existingUser = await UserModel.findOne({ email });
+      const existingUser = await usuariosModelo.findOne({ email });
       if (existingUser) {
         return done(null, false, { message: 'El email ya está registrado' });
       }
 
       // Crea el nuevo usuario
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = await UserModel.create({
+      const newUser = await usuariosModelo.create({
         first_name,
         last_name,
         email,
@@ -42,7 +42,7 @@ passport.use('local-login', new LocalStrategy(
   },
   async (email, password, done) => {
     try {
-      const user = await UserModel.findOne({ email });
+      const user = await usuariosModelo.findOne({ email });
 
       if (!user) {
         return done(null, false, { message: 'Usuario no encontrado' });
@@ -53,13 +53,13 @@ passport.use('local-login', new LocalStrategy(
       if (!isValidPassword) {
         return done(null, false, { message: 'Contraseña incorrecta' });
       }
-
-      return done(null, user);
+      return done(null, user, { successRedirect: '/perfil' });
     } catch (error) {
       return done(error);
     }
   }
 ));
+
 
 const initPassport = () => {
   passport.use('github', new GitHubStrategy(
@@ -70,14 +70,14 @@ const initPassport = () => {
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        let user = await UserModel.findOne({ email: profile._json.email });
+        let user = await usuariosModelo.findOne({ email: profile._json.email });
         if (!user) {
           let newUser = {
             first_name: profile._json.name,
             email: profile._json.email, 
             profile,
           };
-          user = await UserModel.create(newUser);
+          user = await usuariosModelo.create(newUser);
         }
         return done(null, user);
       } catch (error) {
@@ -87,13 +87,17 @@ const initPassport = () => {
   ));
 };
 
-passport.serializeUser((user, done)=>{
-  return done(null, user._id)
-})
+passport.serializeUser((user, done) => {
+  return done(null, user.id);
+});
 
-passport.deserializeUser(async(id, done)=>{
-  const user=await UserModel.findById(id)
-  return done(null, user)
-})
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await usuariosModelo.findById(id);
+    return done(null, user);
+  } catch (error) {
+    return done(error);
+  }
+});
 
 module.exports = { passport, initPassport };

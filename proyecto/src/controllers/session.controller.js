@@ -1,4 +1,3 @@
-// controllers/session.controller.js
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { usuariosModelo } = require('../dao/models/usuarios.modelo.js');

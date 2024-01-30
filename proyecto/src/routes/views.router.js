@@ -116,4 +116,10 @@ router.get('/perfil', auth, (req,res)=>{
     res.status(200).render('perfil', {usuario})
 })  
 
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+
 module.exports = router;
