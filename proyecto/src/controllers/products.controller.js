@@ -1,4 +1,3 @@
-// controllers/product.controller.js
 const { productsModelo } = require('../dao/models/products.model');
 
 class ProductController {
@@ -95,8 +94,10 @@ class ProductController {
 
   async createProduct(req, res) {
     try {
+      if (!req.user.isAdmin) {
+        return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden crear productos' });
+      }
       const { title, description, price, thumbnail, code, stock, category } = req.body;
-      console.log("Recibido desde el body:", { title, description, price, thumbnail, code, stock, category });
 
       if (!title || !description || !price || !category || stock === undefined) {
         res.setHeader('Content-Type', 'application/json');
@@ -126,6 +127,10 @@ class ProductController {
   }
 
   async updateProduct(req, res) {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden actualizar productos' });
+    }
+    
     let { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       res.setHeader('Content-Type', 'application/json');
@@ -169,6 +174,10 @@ class ProductController {
   }
 
   async deleteProduct(req, res) {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden eliminar productos' });
+    }
+
     let { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       res.setHeader('Content-Type', 'application/json');

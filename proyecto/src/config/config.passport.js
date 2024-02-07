@@ -13,13 +13,11 @@ passport.use('local-register', new LocalStrategy(
     try {
       const { first_name, last_name, age } = req.body;
 
-      // Verifica si el email ya está registrado
       const existingUser = await usuariosModelo.findOne({ email });
       if (existingUser) {
         return done(null, false, { message: 'El email ya está registrado' });
       }
 
-      // Crea el nuevo usuario
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await usuariosModelo.create({
         first_name,

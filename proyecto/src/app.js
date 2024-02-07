@@ -1,3 +1,7 @@
+const MongoDBUserRepository = require('./dao/repositories/mongo-db-user.repository');
+const UserService = require('./services/user.service');
+const UserRepository = require('./dao/repositories/user.repository');
+
 require('dotenv').config();
 const passport = require('passport');
 const mongoose = require('mongoose');
@@ -43,12 +47,22 @@ app.use(session(
   }
 ))
 initPassport();
+
+const userRepository = new MongoDBUserRepository();
+const userService = new UserService(userRepository);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
+
+app.get('/user/:id', async (req, res) => {
+  const userId = req.params.id;
+  const user = await userService.getUserById(userId);
+  res.json(user);
+});
 
 
 app.use('/api/carts', cartsRouter);

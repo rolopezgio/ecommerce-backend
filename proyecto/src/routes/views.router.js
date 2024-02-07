@@ -1,10 +1,11 @@
+const SessionController = require('../controllers/session.controller.js');
 const ProductManager = require('../dao/managers/ProductManager');
 const express = require('express');
 const router = express.Router();
 const { UserModel } = require('../dao/models/usuarios.modelo');
 const { cartsModelo } = require('../dao/models/carts.model');
 const bcrypt = require('bcrypt');
-
+const isUser = require('../middlewares/isUser.js');
 
 const productManager = new ProductManager('./src/archivos/productos.json');
 
@@ -20,13 +21,21 @@ router.get('/', (req, res) => {
     res.render('home', { productos });
 });
 
+router.get('/current', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Usuario no autenticado' });
+  }
+  const userData = SessionController.getCurrentUser(req.user);
+  res.json(userData);
+});
+
 router.get('/realtimeproducts', (req, res) => {
     const productos = productManager.getProducts();
 
     res.render('realTimeProducts', { productos });
 });
 
-router.get('/chat', (req, res) => {
+router.get('/chat', isUser, (req, res) => {
 
     res.status(200).render('chat');
 });

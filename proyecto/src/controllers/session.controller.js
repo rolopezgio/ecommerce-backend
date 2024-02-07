@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const { usuariosModelo } = require('../dao/models/usuarios.modelo.js');
+const UserDTO = require('../dao/dtos/user.dto.js');
+
 
 class SessionController {
   async loginUser(req, res, next) {
@@ -64,11 +66,29 @@ class SessionController {
       error: 'Error al autenticar con Github',
     });
   }
-
+  
   async getCurrentUser(req, res) {
-    const { nombre, email } = req.user;
-    res.json({ nombre, email });
+    try {
+      if (!req.user) {
+        this.sendJsonResponse(res, { error: 'Usuario no autenticado.' }, 500);
+      }
+      const userDTO = new UserDTO(req.user);
+      return res.status(200).json(userDTO);
+    } catch (error) {
+      console.error('Error al obtener el usuario actual:', error);
+      return this.sendJsonResponse(res, { error: 'Error al obtener el usuario actual.' }, 500);
+
+    }
   }
+  sendJsonResponse(res, data, status = 200) {
+    if (res) {
+      res.status(status).json(data);
+    } else {
+      console.error('La variable "res" es indefinida.');
+    }
+  }
+  
+  
 }
 
 module.exports = new SessionController();

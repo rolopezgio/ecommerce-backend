@@ -12,8 +12,7 @@ class CartController {
   }
 
   async getCart(req, res) {
-    const cartId = req.params.cid;
-
+    const cartId = req.params.id;
     try {
       const cart = await cartsModelo.findById(cartId).populate('products');
       if (!cart) {
@@ -27,6 +26,37 @@ class CartController {
     }
   }
 
+  async purchaseCart(cartId) {
+    try {
+      const cart = await cartsModelo.findById(cartId);
+      if (!cart) {
+        throw new Error('Carrito no encontrado');
+      }
+  
+      for (const item of cart.products) {
+        const product = await productsModelo.findById(item.product);
+        if (!product) {
+          throw new Error(`Producto con ID ${item.product} no encontrado`);
+        }
+  
+        if (product.stock < item.quantity) {
+          throw new Error(`No hay suficiente stock disponible para el producto ${product.title}`);
+        }
+  
+        product.stock -= item.quantity;
+        await product.save();
+      }
+  
+      cart.isPurchased = true;
+      await cart.save();
+  
+      return cart;
+    } catch (error) {
+      console.error('Error al finalizar la compra del carrito:', error);
+      throw new Error('Error al finalizar la compra del carrito');
+    }
+  }
+  
   async addProductToCart(req, res) {
     const cartId = parseInt(req.params.id);
     const productId = parseInt(req.params.productId);
