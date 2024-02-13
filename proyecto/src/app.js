@@ -22,6 +22,7 @@ const FileStore = require('session-file-store')(session);
 const { usuariosModelo } = require('./dao/models/usuarios.modelo.js');
 const config = require('./config/config.js');
 const bcrypt = require('bcrypt');
+const errorHandler = require('./middlewares/errorHandler.js');
 
 
 const PORTO = 8080;
@@ -71,6 +72,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/session', sessionRouter)
 app.use('/logout', sessionRouter)
 app.use('/', viewsRouter);
+app.use(errorHandler);
 
 passport.use('local-register', new LocalStrategy({
   passReqToCallback: true,
