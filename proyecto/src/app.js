@@ -23,6 +23,9 @@ const { usuariosModelo } = require('./dao/models/usuarios.modelo.js');
 const config = require('./config/config.js');
 const bcrypt = require('bcrypt');
 const errorHandler = require('./middlewares/errorHandler.js');
+const LoggerDevelopment = require('./logger/loggerDevelopment.js');
+const LoggerProduction = require('./logger/loggerProduction.js')
+const loggerRouter = require('./routes/logger.router.js');
 
 
 const PORTO = 8080;
@@ -73,6 +76,17 @@ app.use('/api/session', sessionRouter)
 app.use('/logout', sessionRouter)
 app.use('/', viewsRouter);
 app.use(errorHandler);
+app.use('/api/logger', loggerRouter);
+
+let logger;
+if (process.env.NODE_ENV === 'production') {
+  logger = new LoggerProduction();
+} else {
+  logger = new LoggerDevelopment();
+}
+
+logger.info('¡La aplicación se ha iniciado correctamente!');
+
 
 passport.use('local-register', new LocalStrategy({
   passReqToCallback: true,
