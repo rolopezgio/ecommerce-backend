@@ -24,5 +24,4 @@ class LoggerDevelopment {
     }
   }
   
-  module.exports = LoggerDevelopment;
-  
+  module.exports = LoggerDevelopment; 

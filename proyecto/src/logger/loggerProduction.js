@@ -28,3 +28,4 @@ class LoggerProduction {
 }
 
 module.exports = new LoggerProduction();
+
