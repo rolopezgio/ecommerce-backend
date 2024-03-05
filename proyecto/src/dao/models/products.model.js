@@ -9,6 +9,11 @@ const productsEsquema = new mongoose.Schema(
         code: Number, 
         stock: Number, 
         category: String,
+        owner: {
+            type: String,
+            default: 'admin',
+            required: true
+        }
     }
 ); 
 

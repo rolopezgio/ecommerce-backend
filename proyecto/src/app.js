@@ -26,6 +26,9 @@ const errorHandler = require('./middlewares/errorHandler.js');
 const LoggerDevelopment = require('./logger/loggerDevelopment.js');
 const LoggerProduction = require('./logger/loggerProduction.js')
 const loggerRouter = require('./routes/logger.router.js');
+const usersRouter = require('./routes/users.router');
+
+
 
 
 const PORTO = 8080;
@@ -77,6 +80,7 @@ app.use('/logout', sessionRouter)
 app.use('/', viewsRouter);
 app.use(errorHandler);
 app.use('/api/logger', loggerRouter);
+app.use('/api/users', usersRouter);
 
 let logger;
 if (process.env.NODE_ENV === 'production') {

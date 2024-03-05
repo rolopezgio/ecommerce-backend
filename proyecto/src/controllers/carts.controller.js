@@ -1,4 +1,5 @@
 const { cartsModelo } = require('../dao/models/carts.model');
+const { productsModelo } = require('../dao/models/products.model');
 
 class CartController {
   async createCart(req, res) {
@@ -67,13 +68,24 @@ class CartController {
       if (!cart) {
         return res.status(404).json({ error: 'Carrito no encontrado' });
       }
+      const existingProductIndex = cart.products.findIndex(product => product._id === productId);
+      if (existingProductIndex !== -1) {
+        return res.status(400).json({ error: 'El producto ya pertenece al carrito' });
+      }
+      const product = await productsModelo.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: 'Producto no encontrado' });
+      }
+      if (req.user.isPremium && product.owner === req.user.email) {
+        return res.status(403).json({ error: 'No puedes agregar un producto que te pertenece a tu carrito' });
+      }
 
-      const product = {
+      const newProduct = {
         _id: productId,
         quantity: quantity,
       };
 
-      cart.products.push(product);
+      cart.products.push(newProduct);
       await cart.save();
 
       res.status(201).json(cart);

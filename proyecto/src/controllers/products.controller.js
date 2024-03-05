@@ -127,91 +127,50 @@ class ProductController {
   }
 
   async updateProduct(req, res) {
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden actualizar productos' });
-    }
-    
-    let { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(400).json({ error: `Ingrese id válido` });
-    }
-
-    let existe;
     try {
-      existe = await productsModelo.findById(id);
-      console.log(existe);
-    } catch (error) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ error: `Error inesperado en el servidor - Intente más tarde`, detalle: error.message });
-    }
-
-    if (!existe) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(400).json({ error: `No existen productos con id ${id}` });
-    }
-
-    if (req.body._id) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(400).json({ error: `No se pueden modificar la propiedad "_id"` });
-    }
-
-    let resultado;
-    try {
-      resultado = await productsModelo.updateOne({ _id: id }, req.body);
-      console.log(resultado);
-      if (resultado.modifiedCount > 0) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(200).json({ payload: "Modificación realizada" });
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Ingrese un ID de producto válido' });
+      }
+  
+      const product = await productsModelo.findById(id);
+      if (!product) {
+        return res.status(404).json({ error: 'No se encontró el producto' });
+      }
+  
+      if (req.user.isAdmin) {
+        await productsModelo.updateOne({ _id: id }, req.body);
+        return res.status(200).json({ message: 'Producto actualizado correctamente' });
       } else {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: `No se concretó la modificación` });
+        return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden modificar productos' });
       }
     } catch (error) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ error: `Error inesperado en el servidor - Intente más tarde`, detalle: error.message });
+      console.error('Error al actualizar el producto:', error);
+      return res.status(500).json({ error: 'Error al actualizar el producto' });
     }
   }
 
   async deleteProduct(req, res) {
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ error: 'Acceso denegado: Solo los administradores pueden eliminar productos' });
-    }
-
-    let { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(400).json({ error: `Ingrese un id válido` });
-    }
-
-    let existe;
     try {
-      existe = await productsModelo.findById(id);
-      console.log(existe);
-    } catch (error) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ error: `Error inesperado en el servidor - Intente más tarde`, detalle: error.message });
-    }
-
-    if (!existe) {
-      res.setHeader('Content-Type', 'application/json');
-      return (res.status-400).json({ error: `No existen productos con id ${id}` });
-    }
-
-    let resultado;
-    try {
-      resultado = await productsModelo.deleteOne({ _id: id });
-      console.log(resultado);
-      if (resultado.deletedCount > 0) {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(200).json({ payload: "Eliminación realizada" });
+      const { id } = req.params;
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: 'Ingrese un ID de producto válido' });
+      }
+  
+      const product = await productsModelo.findById(id);
+      if (!product) {
+        return res.status(404).json({ error: 'No se encontró el producto' });
+      }
+  
+      if (req.user.isAdmin || (req.user.isPremium && product.owner === req.user.email)) {
+        await productsModelo.deleteOne({ _id: id });
+        return res.status(200).json({ message: 'Producto eliminado correctamente' });
       } else {
-        res.setHeader('Content-Type', 'application/json');
-        return res.status(400).json({ error: `No se concretó la eliminación` });
+        return res.status(403).json({ error: 'Acceso denegado: No tiene permisos para eliminar este producto' });
       }
     } catch (error) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ error: `Error inesperado en el servidor - Intente más tarde`, detalle: error.message });
+      console.error('Error al eliminar el producto:', error);
+      return res.status(500).json({ error: 'Error al eliminar el producto' });
     }
   }
 }
