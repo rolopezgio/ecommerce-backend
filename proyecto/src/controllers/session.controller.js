@@ -7,7 +7,7 @@ const UserDTO = require('../dao/dtos/user.dto.js');
 class SessionController {
   async loginUser(req, res, next) {
     passport.authenticate('local-login', {
-      successRedirect: '/perfil',
+      successRedirect: '/products',
       failureRedirect: '/login?error=credenciales incorrectas',
     })(req, res, next);
   }
