@@ -27,7 +27,7 @@ const LoggerDevelopment = require('./logger/loggerDevelopment.js');
 const LoggerProduction = require('./logger/loggerProduction.js')
 const loggerRouter = require('./routes/logger.router.js');
 const usersRouter = require('./routes/users.router');
-
+const swaggerSetup = require('../swagger.js');
 
 
 
@@ -57,6 +57,8 @@ initPassport();
 
 const userRepository = new MongoDBUserRepository();
 const userService = new UserService(userRepository);
+
+swaggerSetup(app);
 
 app.use(passport.initialize());
 app.use(passport.session());

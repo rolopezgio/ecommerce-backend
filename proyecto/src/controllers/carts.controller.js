@@ -1,6 +1,19 @@
 const { cartsModelo } = require('../dao/models/carts.model');
 const { productsModelo } = require('../dao/models/products.model');
 
+/**
+ * @swagger
+ * /api/carts:
+ *   post:
+ *     summary: Crea un nuevo carrito.
+ *     description: Crea un nuevo carrito vacío.
+ *     responses:
+ *       201:
+ *         description: Carrito creado exitosamente.
+ *       500:
+ *         description: Error al crear un nuevo carrito.
+ */
+
 class CartController {
   async createCart(req, res) {
     try {
