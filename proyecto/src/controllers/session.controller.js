@@ -9,7 +9,29 @@ class SessionController {
     passport.authenticate('local-login', {
       successRedirect: '/products',
       failureRedirect: '/login?error=credenciales incorrectas',
-    })(req, res, next);
+    })(req, res, async (err) => {
+      if (!err) {
+        try {
+          const userId = req.user._id;
+          await User.findByIdAndUpdate(userId, { last_connection: new Date() });
+        } catch (error) {
+          console.error('Error al actualizar last_connection:', error);
+        }
+      }
+      next(err);
+    });
+  }
+
+  async logoutUser(req, res) {
+    try {
+      const userId = req.user._id;
+      await User.findByIdAndUpdate(userId, { last_connection: new Date() });
+    } catch (error) {
+      console.error('Error al actualizar last_connection:', error);
+    }
+
+    req.logout();
+    res.redirect('/login');
   }
 
   async registerUser(req, res) {
@@ -42,11 +64,6 @@ class SessionController {
     } catch (error) {
       res.redirect('/registro?error=Error inesperado. Reintente en unos minutos');
     }
-  }
-
-  async logoutUser(req, res) {
-    req.logout();
-    res.redirect('/login');
   }
 
   async authenticateGitHub(req, res) {

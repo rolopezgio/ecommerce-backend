@@ -27,6 +27,7 @@ const LoggerDevelopment = require('./logger/loggerDevelopment.js');
 const LoggerProduction = require('./logger/loggerProduction.js')
 const loggerRouter = require('./routes/logger.router.js');
 const usersRouter = require('./routes/users.router');
+const documentsRouter = require('./routes/documents.router.js');
 const swaggerSetup = require('../swagger.js');
 
 
@@ -83,6 +84,7 @@ app.use('/', viewsRouter);
 app.use(errorHandler);
 app.use('/api/logger', loggerRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/users', documentsRouter);
 
 let logger;
 if (process.env.NODE_ENV === 'production') {
