@@ -33,7 +33,7 @@ class UserController {
                 name: file.originalname,
                 reference: `/uploads/${file.filename}`
             }));
-            
+
             user.last_connection = new Date();
 
             const requiredDocuments = ['identificacion', 'comprobante de domicilio', 'comprobante de estado de cuenta'];
@@ -50,6 +50,43 @@ class UserController {
             res.status(500).json({ error: 'Error al subir los documentos' });
         }
     }
+    async getAllUsers(req, res) {
+        try {
+            const users = await usuariosModelo.find({}, { nombre: 1, email: 1, role: 1 });
+            res.status(200).json(users);
+        } catch (error) {
+            console.error('Error al obtener todos los usuarios:', error);
+            res.status(500).json({ error: 'Error al obtener todos los usuarios' });
+        }
+    }
+
+    async deleteInactiveUsers(req, res) {
+        try {
+            const currentDate = new Date();
+            const limitDate = new Date(currentDate);
+            limitDate.setDate(limitDate.getDate() - 2);
+            const inactiveUsers = await usuariosModelo.find({ last_connection: { $lt: limitDate } });
+            if (inactiveUsers.length > 0) {
+                await usuariosModelo.deleteMany({ _id: { $in: inactiveUsers.map(user => user._id) } });
+                res.status(200).json({ message: 'Usuarios inactivos eliminados correctamente' });
+            } else {
+                res.status(200).json({ message: 'No hay usuarios inactivos para eliminar' });
+            }
+        } catch (error) {
+            console.error('Error al eliminar usuarios inactivos:', error);
+            res.status(500).json({ error: 'Error al eliminar usuarios inactivos' });
+        }
+    }
+    async showAdminPanel(req, res) {
+        try {
+            const users = await usuariosModelo.find({});
+            res.render('admin', { users });
+        } catch (error) {
+            console.error('Error al mostrar el panel de administrador:', error);
+            res.status(500).send('Error al mostrar el panel de administrador');
+        }
+    }
+    
 }
 
 module.exports = new UserController();

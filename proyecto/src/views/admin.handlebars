@@ -1,0 +1,37 @@
+    <h1>Admin Dashboard</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            {{#each users}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.role}}</td>
+                <td>
+                    <button onclick="editUser('{{this._id}}')">Edit</button>
+                    <button onclick="deleteUser('{{this._id}}')">Delete</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <script>
+        // Function to edit user role
+        async function editUser(userId) {
+            // Implement edit user role functionality
+        }
+
+        // Function to delete user
+        async function deleteUser(userId) {
+            // Implement delete user functionality
+        }
+    </script>

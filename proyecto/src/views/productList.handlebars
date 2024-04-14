@@ -7,23 +7,19 @@
 </head>
 <body>
   <h1>Lista de Productos</h1>
-  {{#each productos}}
-    <div>
-      <h2>{{title}}</h2>
-      <p>{{description}}</p>
-      <p>Precio: {{price}}</p>
-      <p>Categoría: {{category}}</p>
-      <button onclick="addToCart('{{_id}}')">Agregar al Carrito</button>
-    </div>
-  {{/each}}
-
-  <script>
-    function addToCart(productId) {
-      console.log('Producto agregado al carrito:', productId);
-    }
-  </script>
+  <form action="/api/carts/{{cartId}}" method="POST">
+    {{#each productos}}
+      <div>
+        <h2>{{title}}</h2>
+        <p>{{description}}</p>
+        <p>Precio: {{price}}</p>
+        <p>Categoría: {{category}}</p>
+        <input type="checkbox" name="selectedProducts" value="{{_id}}"> Agregar al Carrito
+      </div>
+    {{/each}}
+    <button type="submit">Agregar Productos al Carrito</button>
+  </form>
 
   <a href="/">Home Page</a>
-
 </body>
 </html>

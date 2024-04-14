@@ -5,5 +5,28 @@
   {{/each}}
 </ul>
 
+<button onclick="confirmPurchase('{{cart._id}}')">Confirmar Compra</button>
+<script>
+  async function confirmPurchase(cartId) {
+    try {
+      const response = await fetch(`/api/carts/${cartId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Error al confirmar la compra');
+      }
+      const data = await response.json();
+      alert(data.message);
+    } catch (error) {
+      console.error('Error al confirmar la compra:', error);
+      alert('Ocurrió un error al confirmar la compra. Por favor, inténtalo de nuevo más tarde.');
+    }
+  }
+</script>
+
+
 <a href="/">Home Page</a>
 <a href="/products">Productos</a>

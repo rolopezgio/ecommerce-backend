@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const { initPassport } = require('./config/config.passport.js');
 const LocalStrategy = require('passport-local').Strategy;
 const express = require('express');
+const sgMail = require('./sendgridConfig.js');
 const messagesRouter = require('./routes/messages/messages.router.js');
 const cartsRouter = require('./routes/carts/carts.router.js');
 const productsRouter = require('./routes/products/products.router.js');
@@ -28,12 +29,16 @@ const LoggerProduction = require('./logger/loggerProduction.js')
 const loggerRouter = require('./routes/logger.router.js');
 const usersRouter = require('./routes/users.router');
 const documentsRouter = require('./routes/documents.router.js');
+const adminRouter = require('./routes/admin.router.js');
 const swaggerSetup = require('../swagger.js');
+const compraRouter = require('./routes/compra.router.js');
+
 
 
 
 const PORTO = 8080;
 const app = express();
+swaggerSetup(app);
 
 app.set('port', config.port);
 
@@ -85,6 +90,9 @@ app.use(errorHandler);
 app.use('/api/logger', loggerRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/users', documentsRouter);
+app.use('/admin', adminRouter);
+app.use('/compra', compraRouter);
+
 
 let logger;
 if (process.env.NODE_ENV === 'production') {

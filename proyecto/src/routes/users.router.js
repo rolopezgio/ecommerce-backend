@@ -6,4 +6,8 @@ router.put('/premium/:uid', UserController.changeUserRole);
 
 router.post('/:uid/documents', UserController.uploadDocuments);
 
+router.get('/', UserController.getAllUsers);
+
+router.delete('/', UserController.deleteInactiveUsers);
+
 module.exports = router;

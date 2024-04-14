@@ -156,23 +156,29 @@ class ProductController {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ error: 'Ingrese un ID de producto válido' });
       }
-  
+
       const product = await productsModelo.findById(id);
       if (!product) {
         return res.status(404).json({ error: 'No se encontró el producto' });
       }
-  
-      if (req.user.isAdmin || (req.user.isPremium && product.owner === req.user.email)) {
-        await productsModelo.deleteOne({ _id: id });
-        return res.status(200).json({ message: 'Producto eliminado correctamente' });
-      } else {
-        return res.status(403).json({ error: 'Acceso denegado: No tiene permisos para eliminar este producto' });
+
+      const owner = await UserModel.findOne({ email: product.owner });
+      if (owner && owner.role === 'premium') {
+        await mailer.sendEmail({
+          to: owner.email,
+          subject: 'Producto eliminado',
+          text: `Hola ${owner.nombre},\n\nTu producto ${product.title} ha sido eliminado. Para más detalles, ponte en contacto con el soporte.`,
+        });
       }
+
+      await productsModelo.deleteOne({ _id: id });
+      return res.status(200).json({ message: 'Producto eliminado correctamente' });
     } catch (error) {
       console.error('Error al eliminar el producto:', error);
       return res.status(500).json({ error: 'Error al eliminar el producto' });
     }
   }
 }
+
 
 module.exports = new ProductController();

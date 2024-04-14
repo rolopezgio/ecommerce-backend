@@ -81,26 +81,23 @@ class CartController {
       if (!cart) {
         return res.status(404).json({ error: 'Carrito no encontrado' });
       }
+  
       const existingProductIndex = cart.products.findIndex(product => product._id === productId);
       if (existingProductIndex !== -1) {
         return res.status(400).json({ error: 'El producto ya pertenece al carrito' });
       }
+  
       const product = await productsModelo.findById(productId);
       if (!product) {
         return res.status(404).json({ error: 'Producto no encontrado' });
       }
-      if (req.user.isPremium && product.owner === req.user.email) {
-        return res.status(403).json({ error: 'No puedes agregar un producto que te pertenece a tu carrito' });
-      }
-
       const newProduct = {
         _id: productId,
         quantity: quantity,
       };
-
       cart.products.push(newProduct);
       await cart.save();
-
+  
       res.status(201).json(cart);
     } catch (error) {
       console.error('Error al agregar producto al carrito:', error);
@@ -204,6 +201,24 @@ class CartController {
       res.status(500).json({ error: 'Error al eliminar todos los productos del carrito.' });
     }
   }
+  
+  async confirmPurchase(req, res) {
+    const cartId = req.params.id;
+    try {
+      const cart = await cartsModelo.findById(cartId);
+      if (!cart) {
+        return res.status(404).json({ error: 'Carrito no encontrado' });
+      }
+            
+      cart.isPurchased = true;
+      await cart.save();
+      
+      res.json({ message: 'Compra confirmada exitosamente' });
+    } catch (error) {
+      console.error('Error al confirmar la compra del carrito:', error);
+      res.status(500).json({ error: 'Error al confirmar la compra del carrito.' });
+    }
+}
 }
 
 module.exports = new CartController();

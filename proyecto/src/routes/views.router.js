@@ -6,6 +6,7 @@ const { UserModel } = require('../dao/models/usuarios.modelo');
 const { cartsModelo } = require('../dao/models/carts.model');
 const bcrypt = require('bcrypt');
 const isUser = require('../middlewares/isUser.js');
+const adminController = require('../controllers/admin.controller.js');
 
 const productManager = new ProductManager('./src/archivos/productos.json');
 
@@ -143,6 +144,8 @@ router.get('/mockingproducts', (req, res) => {
 
   res.json(mockProducts);
 });
+
+router.get('/admin', adminController.showAdminPanel);
 
 
 module.exports = router;
